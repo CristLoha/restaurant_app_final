@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show PendingNotificationRequest;
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../services/restaurant_notification_service.dart';
 
 class SchedulingProvider extends ChangeNotifier {
@@ -14,17 +13,18 @@ class SchedulingProvider extends ChangeNotifier {
 
   final RestaurantNotificationService _notificationService;
 
-  SchedulingProvider({
-    required RestaurantNotificationService notificationService,
-  }) : _notificationService = notificationService {
-    _loadDailyRestaurantStatus();
-    _checkPendingNotifications(); // Cek notifikasi saat provider dibuat
+  SchedulingProvider({required RestaurantNotificationService notificationService})
+      : _notificationService = notificationService {
+    // Gunakan Future.microtask agar pemanggilan async tidak menghambat constructor
+    Future.microtask(() async {
+      await _loadDailyRestaurantStatus();
+      await _checkPendingNotifications();
+    });
   }
 
   Future<void> _loadDailyRestaurantStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    _isDailyRestaurantActive =
-        prefs.getBool('isDailyRestaurantActive') ?? false;
+    _isDailyRestaurantActive = prefs.getBool('isDailyRestaurantActive') ?? false;
     notifyListeners();
   }
 
@@ -40,11 +40,11 @@ class SchedulingProvider extends ChangeNotifier {
       await _notificationService.cancelAllNotifications();
     }
 
-    await _checkPendingNotifications(); // Update status setelah perubahan
+    await _checkPendingNotifications(); 
   }
 
   Future<void> _checkPendingNotifications() async {
-    final pending = await getPendingNotifications();
+    final pending = await _notificationService.getPendingNotifications();
     _hasPendingNotifications = pending.isNotEmpty;
     notifyListeners();
   }

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import '../model/add_review_responde.dart';
+import '../model/restaurant.dart';
 import '../model/restaurant_detail_response.dart';
 import '../model/restaurant_list_response.dart';
 import '../model/restaurant_search_response.dart';
@@ -20,9 +21,6 @@ class ApiService {
       final response = await http
           .get(Uri.parse("$_baseUrl$_listEndpoint"))
           .timeout(_timeoutDuration);
-
-      print("Response status code: ${response.statusCode}");
-      print("Response body: ${response.body}");
 
       if (response.statusCode == 200) {
         return RestaurantListResponse.fromJson(json.decode(response.body));
@@ -104,6 +102,18 @@ class ApiService {
       throw 'Format data tidak valid.';
     } catch (e) {
       throw 'Terjadi kesalahan. Coba lagi nanti.';
+    }
+  }
+
+  Future<Restaurant?> getRandomRestaurant() async {
+    final restaurantListResponse = await getRestaurantList();
+    final restaurants = restaurantListResponse.restaurants;
+
+    if (restaurants.isNotEmpty) {
+      restaurants.shuffle();
+      return restaurants.first;
+    } else {
+      throw 'Tidak ada restoran yang tersedia.';
     }
   }
 }

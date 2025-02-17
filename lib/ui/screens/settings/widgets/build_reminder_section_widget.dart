@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app_final/provider/scheduling/restaurant_notfication_provider.dart';
-import '../../../../provider/scheduling/scheduling_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../../../provider/scheduling/restaurant_notfication_provider.dart';
+import '../../../../provider/scheduling/scheduling_provider.dart';
 
 class BuildDailyReminderSectionWidget extends StatelessWidget {
   const BuildDailyReminderSectionWidget({super.key});

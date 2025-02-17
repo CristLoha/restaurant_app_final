@@ -1,5 +1,5 @@
+import 'dart:async';
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -42,9 +42,7 @@ class RestaurantNotificationService {
   }
 
   Future<bool?> requestPermissions() async {
-    if (_isRequestingPermission) return false; // Ganti null dengan false
-    _isRequestingPermission = true; // Pastikan hanya satu request berjalan
-
+    if (_isRequestingPermission) return null;
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         final iOSImplementation =
@@ -77,10 +75,10 @@ class RestaurantNotificationService {
       }
     } catch (e) {
       log('Error requesting permissions: $e');
-      return false; // Jika error, kembalikan false agar tetap aman
     } finally {
       _isRequestingPermission = false;
     }
+    return null;
   }
 
   Future<void> configureLocalTimeZone() async {
@@ -105,15 +103,12 @@ class RestaurantNotificationService {
     await configureLocalTimeZone();
 
     final apiService = ApiService();
-    final restaurants = await apiService.getRestaurantList();
+    final randomRestaurant = await apiService.getRandomRestaurant();
 
-    if (restaurants.restaurants.isEmpty) {
+    if (randomRestaurant == null) {
       log('Tidak ada restoran yang tersedia.');
       return;
     }
-    final randomRestaurant =
-        restaurants.restaurants[DateTime.now().microsecondsSinceEpoch %
-            restaurants.restaurants.length];
 
     final notificationId = hour * 100 + minute;
 
