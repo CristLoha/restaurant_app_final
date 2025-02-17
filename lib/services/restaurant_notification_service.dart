@@ -7,8 +7,16 @@ import 'package:restaurant_app_final/data/api/api_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../data/model/received_notification.dart';
+
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
+
+final StreamController<ReceivedNotification> didReceiveLocalNotificationStream =
+    StreamController<ReceivedNotification>.broadcast();
+
+final StreamController<String?> selectNotificationStream =
+    StreamController<String?>.broadcast();
 
 class RestaurantNotificationService {
   bool _isRequestingPermission = false;
@@ -18,18 +26,41 @@ class RestaurantNotificationService {
       'app_icon',
     );
 
-    const initializationSettingsDarwin = DarwinInitializationSettings(
+    final initializationSettingsDarwin = DarwinInitializationSettings(
       requestAlertPermission: false,
       requestBadgePermission: false,
       requestSoundPermission: false,
+      onDidReceiveLocalNotification: (
+        int id,
+        String? title,
+        String? body,
+        String? payload,
+      ) async {
+        didReceiveLocalNotificationStream.add(
+          ReceivedNotification(
+            id: id,
+            title: title,
+            body: body,
+            payload: payload,
+          ),
+        );
+      },
     );
 
-    const initializationSettings = InitializationSettings(
+    final initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
       iOS: initializationSettingsDarwin,
     );
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+    await flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (notificationResponse) {
+        final payload = notificationResponse.payload;
+        if (payload != null && payload.isNotEmpty) {
+          selectNotificationStream.add(payload);
+        }
+      },
+    );
   }
 
   Future<bool> _isAndroidPermissionGranted() async {

@@ -7,6 +7,7 @@ import 'provider/favorite/local_database_provider.dart'
     show LocalDatabaseProvider;
 import 'provider/home/restaurant_list_provider.dart';
 import 'provider/navigation/navigation_provider.dart' show NavigationProvider;
+import 'provider/scheduling/payload_provider.dart' show PayloadProvider;
 import 'provider/scheduling/restaurant_notfication_provider.dart';
 import 'provider/scheduling/scheduling_provider.dart';
 import 'provider/search/restaurant_search_provider.dart';
@@ -20,6 +21,17 @@ import 'utils/theme.dart' show AppTheme;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final notificationAppLaunchDetails =
+      await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
+
+  String? payload;
+  String route = NavigationRoute.mainRoute.name;
+  if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
+    final notificationResponse =
+        notificationAppLaunchDetails!.notificationResponse;
+    route = NavigationRoute.detailRoute.name;
+    payload = notificationResponse?.payload;
+  }
   runApp(
     MultiProvider(
       providers: [
@@ -72,14 +84,19 @@ void main() async {
                     context.read<RestaurantNotificationService>(),
               ),
         ),
+
+        ChangeNotifierProvider(
+          create: (context) => PayloadProvider(payload: payload),
+        ),
       ],
-      child: const RestaurantApp(),
+      child: RestaurantApp(initialRoute: route),
     ),
   );
 }
 
 class RestaurantApp extends StatelessWidget {
-  const RestaurantApp({super.key});
+  final String initialRoute;
+  const RestaurantApp({super.key, required this.initialRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -91,7 +108,7 @@ class RestaurantApp extends StatelessWidget {
           theme: AppTheme.lightTheme,
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
-          initialRoute: NavigationRoute.mainRoute.name,
+          initialRoute: initialRoute,
           routes: {
             NavigationRoute.mainRoute.name:
                 (context) => const NavigationScreen(),
