@@ -55,6 +55,7 @@ class RestaurantNotificationService {
     await flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
       onDidReceiveNotificationResponse: (notificationResponse) {
+        log("Notifikasi ditekan! Payload: ${notificationResponse.payload}");
         final payload = notificationResponse.payload;
         if (payload != null && payload.isNotEmpty) {
           selectNotificationStream.add(payload);

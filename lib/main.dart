@@ -112,6 +112,7 @@ class RestaurantApp extends StatelessWidget {
           routes: {
             NavigationRoute.mainRoute.name:
                 (context) => const NavigationScreen(),
+
             NavigationRoute.detailRoute.name:
                 (context) => DetailScreen(
                   tourismId:

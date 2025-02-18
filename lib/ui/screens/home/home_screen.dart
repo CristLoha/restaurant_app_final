@@ -52,15 +52,6 @@ class _HomeScreenState extends State<HomeScreen> {
         context.read<RestaurantListProvider>().fetchRestaurantList();
       }
     });
-    _configureSelectNotificationSubject();
-    _configureDidReceiveLocalNotificationSubject();
-  }
-
-  @override
-  void dispose() {
-    selectNotificationStream.close();
-    didReceiveLocalNotificationStream.close();
-    super.dispose();
   }
 
   @override

@@ -1,10 +1,64 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../../data/model/received_notification.dart';
 import '../../../provider/navigation/navigation_provider.dart';
+import '../../../provider/scheduling/payload_provider.dart';
+import '../../../services/restaurant_notification_service.dart';
+import '../../../static/navigation_route.dart';
 
-class NavigationScreen extends StatelessWidget {
+class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
+
+  @override
+  State<NavigationScreen> createState() => _NavigationScreenState();
+}
+
+class _NavigationScreenState extends State<NavigationScreen> {
+  void _configureSelectNotificationSubject() {
+    selectNotificationStream.stream.listen((String? payload) {
+      if (payload != null) {
+        context.read<PayloadProvider>().payload = payload;
+        Navigator.pushNamed(
+          context,
+          NavigationRoute.detailRoute.name,
+          arguments: payload,
+        );
+      }
+    });
+  }
+
+  void _configureDidReceiveLocalNotificationSubject() {
+    didReceiveLocalNotificationStream.stream.listen((
+      ReceivedNotification receivedNotification,
+    ) {
+      final payload = receivedNotification.payload;
+      if (payload != null) {
+        context.read<PayloadProvider>().payload = payload;
+        Navigator.pushNamed(
+          context,
+          NavigationRoute.detailRoute.name,
+          arguments: payload,
+        );
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      _configureSelectNotificationSubject();
+      _configureDidReceiveLocalNotificationSubject();
+    });
+  }
+
+  @override
+  void dispose() {
+    selectNotificationStream.close();
+    didReceiveLocalNotificationStream.close();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
