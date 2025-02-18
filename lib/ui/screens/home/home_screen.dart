@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../data/model/received_notification.dart';
 import '../../../provider/home/restaurant_list_provider.dart';
-import '../../../provider/scheduling/payload_provider.dart';
-import '../../../services/restaurant_notification_service.dart';
 import '../../../static/navigation_route.dart';
 import '../../../static/restaurant_list_result_state.dart';
 import '../../../utils/theme.dart';
@@ -18,31 +15,6 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  void _configureSelectNotificationSubject() {
-    selectNotificationStream.stream.listen((String? payload) {
-      context.read<PayloadProvider>().payload = payload;
-      Navigator.pushNamed(
-        context,
-        NavigationRoute.detailRoute.name,
-        arguments: payload,
-      );
-    });
-  }
-
-  void _configureDidReceiveLocalNotificationSubject() {
-    didReceiveLocalNotificationStream.stream.listen((
-      ReceivedNotification receivedNotification,
-    ) {
-      final payload = receivedNotification.payload;
-      context.read<PayloadProvider>().payload = payload;
-      Navigator.pushNamed(
-        context,
-        NavigationRoute.detailRoute.name,
-        arguments: receivedNotification.payload,
-      );
-    });
-  }
-
   @override
   void initState() {
     super.initState();

@@ -23,9 +23,9 @@ void main() async {
 
   final notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-
-  String? payload;
   String route = NavigationRoute.mainRoute.name;
+  String? payload;
+  // Mengecek apakah aplikasi diluncurkan dari notifikasi
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     final notificationResponse =
         notificationAppLaunchDetails!.notificationResponse;
