@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import '../../../../utils/theme.dart';
+import 'package:restaurant_app_final/utils/theme.dart';
+
 
 class MenuCardWidget extends StatelessWidget {
   final String menuName;

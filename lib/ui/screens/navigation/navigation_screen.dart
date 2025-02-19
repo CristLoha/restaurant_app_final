@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_app_final/data/model/received_notification.dart';
+import 'package:restaurant_app_final/provider/navigation/navigation_provider.dart';
+import 'package:restaurant_app_final/provider/scheduling/payload_provider.dart';
+import 'package:restaurant_app_final/services/restaurant_notification_service.dart';
+import 'package:restaurant_app_final/static/navigation_route.dart';
 
-import '../../../data/model/received_notification.dart';
-import '../../../provider/navigation/navigation_provider.dart';
-import '../../../provider/scheduling/payload_provider.dart';
-import '../../../services/restaurant_notification_service.dart';
-import '../../../static/navigation_route.dart';
 
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});

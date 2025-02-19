@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../ui/screens/favorites/favorite_screen.dart';
-import '../../ui/screens/home/home_screen.dart';
-import '../../ui/screens/search/search_screen.dart';
-import '../../ui/screens/settings/settings_screen.dart';
+import 'package:restaurant_app_final/ui/screens/favorites/favorite_screen.dart';
+import 'package:restaurant_app_final/ui/screens/home/home_screen.dart';
+import 'package:restaurant_app_final/ui/screens/search/search_screen.dart';
+import 'package:restaurant_app_final/ui/screens/settings/settings_screen.dart';
 
 class NavigationProvider extends ChangeNotifier {
   int _currentIndex = 0;

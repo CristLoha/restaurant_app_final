@@ -1,4 +1,4 @@
-import '../data/model/restaurant.dart';
+import 'package:restaurant_app_final/data/model/restaurant.dart';
 
 sealed class RestaurantDetailResultState {}
 

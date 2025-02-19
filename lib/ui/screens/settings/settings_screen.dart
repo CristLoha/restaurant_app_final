@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../provider/scheduling/scheduling_provider.dart';
+import 'package:restaurant_app_final/provider/scheduling/scheduling_provider.dart';
 import 'widgets/build_reminder_section_widget.dart';
 import 'widgets/build_theme_section_widget.dart';
 

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/model/restaurant.dart';
-import '../../../../provider/detail/favorite_icon_provider.dart';
-import '../../../../provider/favorite/local_database_provider.dart';
-import '../../../../utils/theme.dart';
+import 'package:restaurant_app_final/data/model/restaurant.dart';
+import 'package:restaurant_app_final/provider/detail/favorite_icon_provider.dart';
+import 'package:restaurant_app_final/provider/favorite/local_database_provider.dart';
+import 'package:restaurant_app_final/utils/theme.dart';
+
 
 class FavoriteIconWidget extends StatefulWidget {
   final Restaurant restaurant;

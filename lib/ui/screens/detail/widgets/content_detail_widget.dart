@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../data/model/restaurant.dart';
-import '../../../../provider/detail/restaurant_detail_provider.dart';
-import '../../../../utils/image.util.dart';
-import '../../../../utils/theme.dart';
+import 'package:restaurant_app_final/data/model/restaurant.dart';
+import 'package:restaurant_app_final/provider/detail/restaurant_detail_provider.dart';
+import 'package:restaurant_app_final/utils/image.util.dart';
+import 'package:restaurant_app_final/utils/theme.dart';
 import 'customer_review_widget.dart';
 import 'menu_card_widget.dart';
 

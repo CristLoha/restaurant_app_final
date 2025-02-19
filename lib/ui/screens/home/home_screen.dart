@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../provider/home/restaurant_list_provider.dart';
-import '../../../static/navigation_route.dart';
-import '../../../static/restaurant_list_result_state.dart';
-import '../../../utils/theme.dart';
-import '../../widgets/error_card_widget.dart';
+import 'package:restaurant_app_final/provider/home/restaurant_list_provider.dart';
+import 'package:restaurant_app_final/static/navigation_route.dart';
+import 'package:restaurant_app_final/static/restaurant_list_result_state.dart';
+import 'package:restaurant_app_final/ui/widgets/error_card_widget.dart';
+import 'package:restaurant_app_final/utils/theme.dart';
 import 'widget/restaurant_card_widget.dart';
 
 class HomeScreen extends StatefulWidget {

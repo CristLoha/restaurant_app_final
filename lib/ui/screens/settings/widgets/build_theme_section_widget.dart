@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../../provider/theme/theme_provider.dart';
-import '../../../../utils/theme.dart';
+import 'package:restaurant_app_final/provider/theme/theme_provider.dart';
+import 'package:restaurant_app_final/utils/theme.dart';
+
 
 class BuildThemeSectionWidget extends StatelessWidget {
   const BuildThemeSectionWidget({super.key});
