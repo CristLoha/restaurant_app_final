@@ -4,6 +4,7 @@ import '../../utils/theme.dart';
 class ErrorCardWidget extends StatelessWidget {
   final String message;
   final Function() onTap;
+
   const ErrorCardWidget({
     super.key,
     required this.message,
@@ -15,7 +16,7 @@ class ErrorCardWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.error_outline, color: Colors.red, size: 64),
+        const Icon(Icons.error_outline, color: Colors.red, size: 64),
         const SizedBox(height: 16),
         Text('Oops!', style: AppTextStyles.textThemeCustom.headlineMedium),
         const SizedBox(height: 8),

@@ -73,41 +73,14 @@ class AppTextStyles {
       fontSize: 24,
       fontWeight: FontWeight.w600,
     ),
-    titleLarge: GoogleFonts.poppins(
-      fontSize: 22,
-      fontWeight: FontWeight.w500,
-    ),
-    titleMedium: GoogleFonts.poppins(
-      fontSize: 16,
-      fontWeight: FontWeight.w500,
-    ),
-    titleSmall: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w500,
-    ),
-    bodyLarge: GoogleFonts.poppins(
-      fontSize: 16,
-      fontWeight: FontWeight.w400,
-    ),
-    bodyMedium: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w400,
-    ),
-    bodySmall: GoogleFonts.poppins(
-      fontSize: 12,
-      fontWeight: FontWeight.w400,
-    ),
-    labelLarge: GoogleFonts.poppins(
-      fontSize: 14,
-      fontWeight: FontWeight.w600,
-    ),
-    labelMedium: GoogleFonts.poppins(
-      fontSize: 12,
-      fontWeight: FontWeight.w500,
-    ),
-    labelSmall: GoogleFonts.poppins(
-      fontSize: 11,
-      fontWeight: FontWeight.w500,
-    ),
+    titleLarge: GoogleFonts.poppins(fontSize: 22, fontWeight: FontWeight.w500),
+    titleMedium: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w500),
+    titleSmall: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w500),
+    bodyLarge: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.w400),
+    bodyMedium: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w400),
+    bodySmall: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w400),
+    labelLarge: GoogleFonts.poppins(fontSize: 14, fontWeight: FontWeight.w600),
+    labelMedium: GoogleFonts.poppins(fontSize: 12, fontWeight: FontWeight.w500),
+    labelSmall: GoogleFonts.poppins(fontSize: 11, fontWeight: FontWeight.w500),
   );
 }
