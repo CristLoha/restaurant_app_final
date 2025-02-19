@@ -15,27 +15,20 @@ class ErrorCardWidget extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(
-          Icons.error_outline,
-          color: Colors.red,
-          size: 64,
-        ),
+        Icon(Icons.error_outline, color: Colors.red, size: 64),
         const SizedBox(height: 16),
-        Text(
-          'Oops!',
-          style: AppTextStyles.textThemeCustom.headlineMedium,
-        ),
+        Text('Oops!', style: AppTextStyles.textThemeCustom.headlineMedium),
         const SizedBox(height: 8),
-        Text(
-          message,
-          textAlign: TextAlign.center,
-          style: AppTextStyles.textThemeCustom.bodyLarge,
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            message,
+            textAlign: TextAlign.center,
+            style: AppTextStyles.textThemeCustom.bodyLarge,
+          ),
         ),
         const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: onTap,
-          child: const Text('Coba Lagi'),
-        ),
+        ElevatedButton(onPressed: onTap, child: const Text('Coba Lagi')),
       ],
     );
   }
