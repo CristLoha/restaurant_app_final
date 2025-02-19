@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/search/restaurant_search_provider.dart';
@@ -17,36 +16,17 @@ class SearchScreen extends StatefulWidget {
 
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _controller = TextEditingController();
-  Timer? _debounce;
 
   @override
   void dispose() {
     _controller.dispose();
-    _debounce?.cancel();
     super.dispose();
-  }
-
-  void _onSearchChanged(String query) {
-    if (_debounce?.isActive ?? false) _debounce?.cancel();
-    setState(() {});
-    _debounce = Timer(const Duration(milliseconds: 500), () {
-      if (query.isNotEmpty) {
-        context.read<RestaurantSearchProvider>().searchRestaurant(query);
-      }
-    });
-  }
-
-  void _clearSearch() {
-    setState(() {
-      _controller.clear();
-      context.read<RestaurantSearchProvider>().resetSearch();
-    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Search Restaurant')),
+      appBar: AppBar(title: const Text('Search Restaurant')),
       body: Column(
         children: [
           Padding(
@@ -54,8 +34,8 @@ class _SearchScreenState extends State<SearchScreen> {
             child: TextField(
               controller: _controller,
               decoration: InputDecoration(
-                labelText: 'Cari restorant',
-                border: OutlineInputBorder(),
+                labelText: 'Cari restoran',
+                border: const OutlineInputBorder(),
                 fillColor: AppColors.grey,
                 suffixIcon:
                     _controller.text.isNotEmpty
@@ -65,13 +45,6 @@ class _SearchScreenState extends State<SearchScreen> {
                         )
                         : null,
               ),
-              onSubmitted: (query) {
-                if (query.isNotEmpty) {
-                  context.read<RestaurantSearchProvider>().searchRestaurant(
-                    query,
-                  );
-                }
-              },
               onChanged: _onSearchChanged,
             ),
           ),
@@ -79,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
             child: Consumer<RestaurantSearchProvider>(
               builder: (context, value, child) {
                 return switch (value.resultState) {
-                  RestaurantSearchLoadingState() => Center(
+                  RestaurantSearchLoadingState() => const Center(
                     child: CircularProgressIndicator(),
                   ),
                   RestaurantSearchLoadedState(data: var restaurants) =>
@@ -145,5 +118,14 @@ class _SearchScreenState extends State<SearchScreen> {
         ],
       ),
     );
+  }
+
+  void _onSearchChanged(String query) {
+    context.read<RestaurantSearchProvider>().debouncedSearch(query);
+  }
+
+  void _clearSearch() {
+    _controller.clear();
+    context.read<RestaurantSearchProvider>().resetSearch();
   }
 }

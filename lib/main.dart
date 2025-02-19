@@ -99,6 +99,7 @@ class AppEntry extends StatelessWidget {
 
 class RestaurantApp extends StatelessWidget {
   final String initialRoute;
+
   const RestaurantApp({super.key, required this.initialRoute});
 
   @override

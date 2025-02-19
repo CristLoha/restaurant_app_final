@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
 import '../../../provider/favorite/local_database_provider.dart';
 import '../../../static/navigation_route.dart';
 import '../home/widget/restaurant_card_widget.dart';
