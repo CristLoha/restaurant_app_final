@@ -18,7 +18,6 @@ class ContentDetailWidget extends StatefulWidget {
 class _ContentDetailWidgetState extends State<ContentDetailWidget> {
   final _nameC = TextEditingController();
   final _reviewC = TextEditingController();
-  bool _isSubmitting = false;
 
   @override
   void dispose() {
@@ -27,7 +26,8 @@ class _ContentDetailWidgetState extends State<ContentDetailWidget> {
     super.dispose();
   }
 
-  void _submitReview() async {
+  void _submitReview(BuildContext context) async {
+    final provider = context.read<RestaurantDetailProvider>();
     final name = _nameC.text.trim();
     final review = _reviewC.text.trim();
 
@@ -38,42 +38,20 @@ class _ContentDetailWidgetState extends State<ContentDetailWidget> {
       return;
     }
 
-    setState(() {
-      _isSubmitting = true;
-    });
-
     try {
-      await context.read<RestaurantDetailProvider>().addReview(
-        widget.restaurantDetail.id,
-        name,
-        review,
+      await provider.addReview(widget.restaurantDetail.id, name, review);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Review berhasil ditambahkan.')),
       );
-
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Review berhasil ditambahkan.')),
-        );
-      }
 
       _nameC.clear();
       _reviewC.clear();
-      if (mounted) {
-        await context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
-          widget.restaurantDetail.id,
-        );
-      }
+
+      await provider.fetchRestaurantDetail(widget.restaurantDetail.id);
     } catch (error) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Gagal menambahkan review: $error')),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isSubmitting = false;
-        });
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Gagal menambahkan review: $error')),
+      );
     }
   }
 
@@ -205,12 +183,16 @@ class _ContentDetailWidgetState extends State<ContentDetailWidget> {
                 maxLines: 3,
               ),
               const SizedBox(height: 16),
-              _isSubmitting
-                  ? const Center(child: CircularProgressIndicator())
-                  : ElevatedButton(
-                    onPressed: _submitReview,
-                    child: const Text('Kirim Review'),
-                  ),
+              Consumer<RestaurantDetailProvider>(
+                builder: (context, provider, child) {
+                  return provider.isSubmitting
+                      ? const Center(child: CircularProgressIndicator())
+                      : ElevatedButton(
+                        onPressed: () => _submitReview(context),
+                        child: const Text('Kirim Review'),
+                      );
+                },
+              ),
             ],
           ),
         ),

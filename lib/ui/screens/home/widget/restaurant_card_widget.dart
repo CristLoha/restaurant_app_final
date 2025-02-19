@@ -1,9 +1,9 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:restaurant_app_final/data/model/restaurant.dart';
 import 'package:restaurant_app_final/utils/image.util.dart';
 import 'package:restaurant_app_final/utils/theme.dart';
 import 'package:shimmer/shimmer.dart';
-
 
 class RestaurantCardWidget extends StatelessWidget {
   final Restaurant restaurant;
@@ -40,17 +40,24 @@ class RestaurantCardWidget extends StatelessWidget {
                     ),
                     Hero(
                       tag: restaurant.id,
-                      child: Image.network(
-                        getRestaurantImageUrl(restaurant.pictureId),
+                      child: CachedNetworkImage(
+                        imageUrl: getRestaurantImageUrl(restaurant.pictureId),
                         fit: BoxFit.cover,
                         width: 100,
                         height: 80,
-                        loadingBuilder: (context, child, loadingProgress) {
-                          if (loadingProgress == null) {
-                            return child;
-                          }
-                          return const SizedBox();
-                        },
+                        progressIndicatorBuilder:
+                            (context, url, progress) => Center(
+                              child: CircularProgressIndicator(
+                                value: progress.progress,
+                              ),
+                            ),
+                        errorWidget:
+                            (context, url, error) => const Center(
+                              child: Icon(
+                                Icons.broken_image,
+                                color: Colors.grey,
+                              ),
+                            ),
                       ),
                     ),
                   ],

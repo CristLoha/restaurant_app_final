@@ -3,7 +3,6 @@ import 'package:restaurant_app_final/data/api/api_service.dart';
 import 'package:restaurant_app_final/static/restaurant_detail_result_state.dart';
 import 'package:restaurant_app_final/static/restaurant_review_result_state.dart';
 
-
 class RestaurantDetailProvider extends ChangeNotifier {
   final ApiService _apiService;
   RestaurantDetailProvider(this._apiService);
@@ -13,6 +12,10 @@ class RestaurantDetailProvider extends ChangeNotifier {
 
   RestaurantReviewResultState _reviewState = RestaurantReviewNoneState();
   RestaurantReviewResultState get reviewState => _reviewState;
+
+  bool _isSubmitting = false;
+  bool get isSubmitting => _isSubmitting;
+
   Future<void> fetchRestaurantDetail(String id) async {
     try {
       _resultState = RestaurantDetailLoadingState();
@@ -21,15 +24,14 @@ class RestaurantDetailProvider extends ChangeNotifier {
       final result = await _apiService.getRestaurantDetail(id);
       if (result.error) {
         _resultState = RestaurantDetailErrorState(result.message);
-        notifyListeners();
       } else {
         _resultState = RestaurantDetailLoadedState(result.restaurant);
-        notifyListeners();
       }
     } catch (e) {
       _resultState = RestaurantDetailErrorState(
         e is String ? e : 'Terjadi kesalahan. Coba lagi nanti.',
       );
+    } finally {
       notifyListeners();
     }
   }
@@ -39,7 +41,10 @@ class RestaurantDetailProvider extends ChangeNotifier {
     String name,
     String review,
   ) async {
+    if (name.isEmpty || review.isEmpty) return;
+    
     try {
+      _isSubmitting = true;
       _reviewState = RestaurantReviewLoadingState();
       notifyListeners();
 
@@ -53,11 +58,11 @@ class RestaurantDetailProvider extends ChangeNotifier {
         _resultState = RestaurantDetailLoadedState(updateRestaurant);
       }
       _reviewState = RestaurantReviewSuccessState(result.message);
-      notifyListeners();
     } catch (e) {
       _reviewState = RestaurantReviewErrorState('Gagal menambahkan review: $e');
-      notifyListeners();
     } finally {
+      _isSubmitting = false;
+      notifyListeners();
       Future.delayed(const Duration(seconds: 2), () {
         _reviewState = RestaurantReviewNoneState();
         notifyListeners();
