@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:restaurant_app_final/data/api/api_service.dart';
 import 'package:restaurant_app_final/static/restaurant_search_result_state.dart';
 
-
 class RestaurantSearchProvider extends ChangeNotifier {
   final ApiService _apiService;
   Timer? _debounce;

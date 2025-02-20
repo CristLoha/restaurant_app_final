@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app_final/utils/theme.dart';
 
-
 class CustomerReviewWidget extends StatelessWidget {
   final String name;
   final String review;
@@ -22,17 +21,11 @@ class CustomerReviewWidget extends StatelessWidget {
         size: 40,
         color: AppColors.grey,
       ),
-      title: Text(
-        name,
-        style: AppTextStyles.textThemeCustom.titleMedium,
-      ),
+      title: Text(name, style: AppTextStyles.textThemeCustom.titleMedium),
       subtitle: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            review,
-            style: AppTextStyles.textThemeCustom.bodyMedium,
-          ),
+          Text(review, style: AppTextStyles.textThemeCustom.bodyMedium),
           const SizedBox(height: 4),
           Text(
             date,

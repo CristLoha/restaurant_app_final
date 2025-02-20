@@ -4,7 +4,6 @@ import 'package:restaurant_app_final/provider/scheduling/restaurant_notfication_
 import 'package:restaurant_app_final/provider/scheduling/scheduling_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 class BuildDailyReminderSectionWidget extends StatelessWidget {
   const BuildDailyReminderSectionWidget({super.key});
 

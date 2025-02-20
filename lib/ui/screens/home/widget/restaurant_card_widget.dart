@@ -45,12 +45,6 @@ class RestaurantCardWidget extends StatelessWidget {
                         fit: BoxFit.cover,
                         width: 100,
                         height: 80,
-                        progressIndicatorBuilder:
-                            (context, url, progress) => Center(
-                              child: CircularProgressIndicator(
-                                value: progress.progress,
-                              ),
-                            ),
                         errorWidget:
                             (context, url, error) => const Center(
                               child: Icon(

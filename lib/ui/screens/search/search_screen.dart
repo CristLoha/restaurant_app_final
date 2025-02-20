@@ -7,7 +7,6 @@ import 'package:restaurant_app_final/ui/screens/home/widget/restaurant_card_widg
 import 'package:restaurant_app_final/ui/widgets/error_card_widget.dart';
 import 'package:restaurant_app_final/utils/theme.dart';
 
-
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 

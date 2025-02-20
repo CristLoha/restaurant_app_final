@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:restaurant_app_final/provider/theme/theme_provider.dart';
 import 'package:restaurant_app_final/utils/theme.dart';
 
-
 class BuildThemeSectionWidget extends StatelessWidget {
   const BuildThemeSectionWidget({super.key});
 

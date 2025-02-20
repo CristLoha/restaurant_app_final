@@ -15,9 +15,10 @@ class AddReviewResponse {
     return AddReviewResponse(
       error: json['error'],
       message: json['message'],
-      customerReviews: (json['customerReviews'] as List)
-          .map((e) => CustomerReview.fromJson(e))
-          .toList(),
+      customerReviews:
+          (json['customerReviews'] as List)
+              .map((e) => CustomerReview.fromJson(e))
+              .toList(),
     );
   }
 }

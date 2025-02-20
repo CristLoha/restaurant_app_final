@@ -26,7 +26,7 @@ class _ContentDetailWidgetState extends State<ContentDetailWidget> {
     super.dispose();
   }
 
-  void _submitReview(BuildContext context) async {
+  void _submitReview() async {
     final provider = context.read<RestaurantDetailProvider>();
     final name = _nameC.text.trim();
     final review = _reviewC.text.trim();
@@ -40,18 +40,22 @@ class _ContentDetailWidgetState extends State<ContentDetailWidget> {
 
     try {
       await provider.addReview(widget.restaurantDetail.id, name, review);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Review berhasil ditambahkan.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Review berhasil ditambahkan.')),
+        );
+      }
 
       _nameC.clear();
       _reviewC.clear();
 
       await provider.fetchRestaurantDetail(widget.restaurantDetail.id);
     } catch (error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Gagal menambahkan review: $error')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Gagal menambahkan review: $error')),
+        );
+      }
     }
   }
 
@@ -188,7 +192,7 @@ class _ContentDetailWidgetState extends State<ContentDetailWidget> {
                   return provider.isSubmitting
                       ? const Center(child: CircularProgressIndicator())
                       : ElevatedButton(
-                        onPressed: () => _submitReview(context),
+                        onPressed: () => _submitReview(),
                         child: const Text('Kirim Review'),
                       );
                 },

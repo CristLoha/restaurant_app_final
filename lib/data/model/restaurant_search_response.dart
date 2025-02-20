@@ -15,10 +15,12 @@ class RestaurantSearchResponse {
     return RestaurantSearchResponse(
       error: json['error'],
       founded: json['founded'],
-      restaurants: json['restaurants'] != null
-          ? List<Restaurant>.from(
-              json["restaurants"].map((x) => Restaurant.fromJson(x)))
-          : <Restaurant>[],
+      restaurants:
+          json['restaurants'] != null
+              ? List<Restaurant>.from(
+                json["restaurants"].map((x) => Restaurant.fromJson(x)),
+              )
+              : <Restaurant>[],
     );
   }
 }

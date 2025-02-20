@@ -1,7 +1,6 @@
 import 'package:restaurant_app_final/data/model/restaurant.dart';
 import 'package:sqflite/sqflite.dart';
 
-
 class LocalDatabaseService {
   static const String _databaseName = 'restaurant-app.db';
   static const String _tableName = 'restaurant';

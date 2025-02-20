@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:restaurant_app_final/utils/theme.dart';
 
-
 class ErrorCardWidget extends StatelessWidget {
   final String message;
   final Function() onTap;

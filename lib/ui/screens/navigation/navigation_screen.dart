@@ -6,7 +6,6 @@ import 'package:restaurant_app_final/provider/scheduling/payload_provider.dart';
 import 'package:restaurant_app_final/services/restaurant_notification_service.dart';
 import 'package:restaurant_app_final/static/navigation_route.dart';
 
-
 class NavigationScreen extends StatefulWidget {
   const NavigationScreen({super.key});
 

@@ -42,7 +42,7 @@ class RestaurantDetailProvider extends ChangeNotifier {
     String review,
   ) async {
     if (name.isEmpty || review.isEmpty) return;
-    
+
     try {
       _isSubmitting = true;
       _reviewState = RestaurantReviewLoadingState();

@@ -34,18 +34,20 @@ class Restaurant {
       city: json['city'],
       address: json['address'],
       pictureId: json['pictureId'],
-      categories: json['categories'] != null
-          ? (json['categories'] as List)
-              .map((e) => Category.fromJson(e))
-              .toList()
-          : null,
+      categories:
+          json['categories'] != null
+              ? (json['categories'] as List)
+                  .map((e) => Category.fromJson(e))
+                  .toList()
+              : null,
       menus: json['menus'] != null ? Menus.fromJson(json['menus']) : null,
       rating: (json['rating'] as num).toDouble(),
-      customerReviews: json['customerReviews'] != null
-          ? (json['customerReviews'] as List)
-              .map((e) => CustomerReview.fromJson(e))
-              .toList()
-          : null,
+      customerReviews:
+          json['customerReviews'] != null
+              ? (json['customerReviews'] as List)
+                  .map((e) => CustomerReview.fromJson(e))
+                  .toList()
+              : null,
     );
   }
   factory Restaurant.fromSearchJson(Map<String, dynamic> json) {
@@ -62,9 +64,7 @@ class Restaurant {
       customerReviews: null,
     );
   }
-  Restaurant copyWith({
-    List<CustomerReview>? customerReviews,
-  }) {
+  Restaurant copyWith({List<CustomerReview>? customerReviews}) {
     return Restaurant(
       id: id,
       name: name,
