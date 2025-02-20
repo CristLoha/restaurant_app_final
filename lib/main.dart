@@ -3,11 +3,10 @@ import 'package:provider/provider.dart';
 import 'data/api/api_service.dart';
 import 'data/local/local_database_service.dart';
 import 'provider/detail/restaurant_detail_provider.dart';
-import 'provider/favorite/local_database_provider.dart'
-    show LocalDatabaseProvider;
+import 'provider/favorite/local_database_provider.dart';
 import 'provider/home/restaurant_list_provider.dart';
-import 'provider/navigation/navigation_provider.dart' show NavigationProvider;
-import 'provider/scheduling/payload_provider.dart' show PayloadProvider;
+import 'provider/navigation/navigation_provider.dart';
+import 'provider/scheduling/payload_provider.dart';
 import 'provider/scheduling/restaurant_notfication_provider.dart';
 import 'provider/scheduling/scheduling_provider.dart';
 import 'provider/search/restaurant_search_provider.dart';
@@ -16,7 +15,7 @@ import 'services/restaurant_notification_service.dart';
 import 'static/navigation_route.dart';
 import 'ui/screens/detail/detail_screen.dart';
 import 'ui/screens/navigation/navigation_screen.dart';
-import 'utils/theme.dart' show AppTheme;
+import 'utils/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,31 +24,36 @@ void main() async {
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
   String route = NavigationRoute.mainRoute.name;
   String? payload;
-  // Mengecek apakah aplikasi diluncurkan dari notifikasi
+
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     final notificationResponse =
         notificationAppLaunchDetails!.notificationResponse;
     route = NavigationRoute.detailRoute.name;
     payload = notificationResponse?.payload;
   }
-  runApp(
-    MultiProvider(
+
+  runApp(AppEntry(initialRoute: route, payload: payload));
+}
+
+class AppEntry extends StatelessWidget {
+  final String initialRoute;
+  final String? payload;
+
+  const AppEntry({super.key, required this.initialRoute, this.payload});
+
+  @override
+  Widget build(BuildContext context) {
+    return MultiProvider(
       providers: [
-        // Provider untuk layanan utama (tanpa dependencies)
-        Provider<ApiService>(create: (_) => ApiService()),
-        Provider<LocalDatabaseService>(create: (_) => LocalDatabaseService()),
-
-        Provider<RestaurantNotificationService>(
-          lazy: false, // Agar langsung diinisialisasi
-          create: (context) {
-            final service = RestaurantNotificationService();
-            service.init();
-            service.configureLocalTimeZone();
-            return service;
-          },
+        Provider(create: (_) => ApiService()),
+        Provider(create: (_) => LocalDatabaseService()),
+        Provider(
+          create:
+              (_) =>
+                  RestaurantNotificationService()
+                    ..init()
+                    ..configureLocalTimeZone(),
         ),
-
-        // Provider yang bergantung pada layanan di atas
         ChangeNotifierProvider(create: (context) => NavigationProvider()),
         ChangeNotifierProvider(
           create:
@@ -84,14 +88,13 @@ void main() async {
                     context.read<RestaurantNotificationService>(),
               ),
         ),
-
         ChangeNotifierProvider(
           create: (context) => PayloadProvider(payload: payload),
         ),
       ],
-      child: RestaurantApp(initialRoute: route),
-    ),
-  );
+      child: RestaurantApp(initialRoute: initialRoute),
+    );
+  }
 }
 
 class RestaurantApp extends StatelessWidget {
@@ -112,12 +115,10 @@ class RestaurantApp extends StatelessWidget {
           routes: {
             NavigationRoute.mainRoute.name:
                 (context) => const NavigationScreen(),
-
-            NavigationRoute.detailRoute.name:
-                (context) => DetailScreen(
-                  tourismId:
-                      ModalRoute.of(context)?.settings.arguments as String,
-                ),
+            NavigationRoute.detailRoute.name: (context) {
+              final args = ModalRoute.of(context)?.settings.arguments;
+              return DetailScreen(tourismId: args is String ? args : '');
+            },
           },
         );
       },

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../../provider/scheduling/restaurant_notfication_provider.dart';
 import '../../../../provider/scheduling/scheduling_provider.dart';
 
@@ -16,19 +15,16 @@ class BuildDailyReminderSectionWidget extends StatelessWidget {
     final notificationProvider = context.read<RestaurantNotificationProvider>();
 
     if (newValue) {
-      // Cek apakah izin sudah pernah diberikan dengan SharedPreferences
       final prefs = await SharedPreferences.getInstance();
       bool hasRequestedPermission =
           prefs.getBool('hasRequestedPermission') ?? false;
 
       if (!hasRequestedPermission) {
-        // Jika belum pernah meminta izin, tampilkan permintaan izin
         await notificationProvider.requestPermission();
         await prefs.setBool('hasRequestedPermission', true);
       }
     }
 
-    // Tetap aktifkan/matikan reminder
     schedulingProvider.enableDailyRestaurants(newValue);
   }
 

@@ -18,12 +18,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
   void _configureSelectNotificationSubject() {
     selectNotificationStream.stream.listen((String? payload) {
       if (payload != null) {
-        context.read<PayloadProvider>().payload = payload;
-        Navigator.pushNamed(
-          context,
-          NavigationRoute.detailRoute.name,
-          arguments: payload,
-        );
+        if (mounted) {
+          context.read<PayloadProvider>().payload = payload;
+          Navigator.pushNamed(
+            context,
+            NavigationRoute.detailRoute.name,
+            arguments: payload,
+          );
+        }
       }
     });
   }
@@ -34,12 +36,14 @@ class _NavigationScreenState extends State<NavigationScreen> {
     ) {
       final payload = receivedNotification.payload;
       if (payload != null) {
-        context.read<PayloadProvider>().payload = payload;
-        Navigator.pushNamed(
-          context,
-          NavigationRoute.detailRoute.name,
-          arguments: payload,
-        );
+        if (mounted) {
+          context.read<PayloadProvider>().payload = payload;
+          Navigator.pushNamed(
+            context,
+            NavigationRoute.detailRoute.name,
+            arguments: payload,
+          );
+        }
       }
     });
   }
@@ -69,6 +73,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
       bottomNavigationBar: SizedBox(
         height: 100,
         child: BottomNavigationBar(
+          key: const Key('bottom_nav_bar'),
           type: BottomNavigationBarType.fixed,
           currentIndex: navigationProvider.currentIndex,
           onTap: navigationProvider.setIndex,

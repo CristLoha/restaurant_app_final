@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import '../../data/local/local_database_service.dart';
 import '../../data/model/restaurant.dart';
 

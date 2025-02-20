@@ -12,24 +12,13 @@ void main() {
   late MockApiService mockApiService;
   late RestaurantListProvider provider;
 
-  setUpAll(() {
-    registerFallbackValue(
-      Restaurant(
-        id: 'rqdv5juczeskfw1e867',
-        name: 'Melting Pot',
-        description: 'Restoran terkenal dengan hidangan khas.',
-        pictureId: '14',
-        city: 'Medan',
-        rating: 4.2,
-      ),
-    );
-  });
-
   setUp(() {
     mockApiService = MockApiService();
     provider = RestaurantListProvider(mockApiService);
   });
+
   group('Pengujian RestaurantListProvider', () {
+    // Skenario 1: Memastikan state awal provider harus didefinisikan
     test(
       'Seharusnya mengembalikan state awal sebagai RestaurantListNoneState',
       () {
@@ -37,6 +26,7 @@ void main() {
       },
     );
 
+    // Skenario 2: Memastikan harus mengembalikan daftar restoran ketika pengambilan data API berhasil
     test(
       'Seharusnya mengembalikan RestaurantListLoadedState ketika API berhasil mengambil data restoran',
       () async {
@@ -70,12 +60,13 @@ void main() {
       },
     );
 
+    // Skenario 3: Memastikan harus mengembalikan kesalahan ketika pengambilan data API gagal
     test(
       'Seharusnya mengembalikan RestaurantListErrorState ketika API gagal mengambil data restoran',
       () async {
         when(
           () => mockApiService.getRestaurantList(),
-        ).thenThrow(Exception('Terjadi kesalahan. Coba lagi nanti.'));
+        ).thenThrow(Exception('Terjadi kesalahan.'));
 
         await provider.fetchRestaurantList();
 
@@ -86,6 +77,7 @@ void main() {
       },
     );
 
+    // Skenario Tambahan: Memastikan harus mengembalikan pesan khusus ketika daftar restoran kosong
     test(
       'Seharusnya mengembalikan RestaurantListErrorState dengan pesan khusus ketika API mengembalikan daftar restoran kosong',
       () async {

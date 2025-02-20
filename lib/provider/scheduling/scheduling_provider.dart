@@ -13,9 +13,9 @@ class SchedulingProvider extends ChangeNotifier {
 
   final RestaurantNotificationService _notificationService;
 
-  SchedulingProvider({required RestaurantNotificationService notificationService})
-      : _notificationService = notificationService {
-    // Gunakan Future.microtask agar pemanggilan async tidak menghambat constructor
+  SchedulingProvider({
+    required RestaurantNotificationService notificationService,
+  }) : _notificationService = notificationService {
     Future.microtask(() async {
       await _loadDailyRestaurantStatus();
       await _checkPendingNotifications();
@@ -24,7 +24,8 @@ class SchedulingProvider extends ChangeNotifier {
 
   Future<void> _loadDailyRestaurantStatus() async {
     final prefs = await SharedPreferences.getInstance();
-    _isDailyRestaurantActive = prefs.getBool('isDailyRestaurantActive') ?? false;
+    _isDailyRestaurantActive =
+        prefs.getBool('isDailyRestaurantActive') ?? false;
     notifyListeners();
   }
 
@@ -40,7 +41,7 @@ class SchedulingProvider extends ChangeNotifier {
       await _notificationService.cancelAllNotifications();
     }
 
-    await _checkPendingNotifications(); 
+    await _checkPendingNotifications();
   }
 
   Future<void> _checkPendingNotifications() async {

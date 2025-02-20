@@ -1,5 +1,4 @@
 import 'package:sqflite/sqflite.dart';
-
 import '../model/restaurant.dart';
 
 class LocalDatabaseService {

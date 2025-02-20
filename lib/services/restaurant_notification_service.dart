@@ -6,7 +6,6 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:restaurant_app_final/data/api/api_service.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
-
 import '../data/model/received_notification.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -114,12 +113,9 @@ class RestaurantNotificationService {
   }
 
   Future<void> configureLocalTimeZone() async {
-    tz.initializeTimeZones(); // Inisialisasi zona waktu dari package timezone
-    final String timeZoneName =
-        await FlutterTimezone.getLocalTimezone(); // Ambil zona waktu perangkat
-    tz.setLocalLocation(
-      tz.getLocation(timeZoneName),
-    ); // Set lokasi zona waktu yang sesuai
+    tz.initializeTimeZones();
+    final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+    tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
   Future<bool> _requestExactAlarmsPermission() async {

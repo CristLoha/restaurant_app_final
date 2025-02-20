@@ -24,6 +24,7 @@ class RestaurantListProvider extends ChangeNotifier {
         _resultState = RestaurantListErrorState(
           'Tidak ada restoran yang tersedia.',
         );
+        notifyListeners();
       } else {
         _resultState = RestaurantListLoadedState(result.restaurants);
         notifyListeners();
