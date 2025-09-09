@@ -16,9 +16,10 @@ class RestaurantNotificationProvider extends ChangeNotifier {
 
   List<PendingNotificationRequest> pendingNotificationRequest = [];
 
-  Future<void> requestPermission() async {
+  Future<bool?> requestPermission() async {
     _permission = await notificationService.requestPermissions();
     notifyListeners();
+    return _permission;
   }
 
   Future<void> scheduleDailyNotification(int hour, int minute) async {

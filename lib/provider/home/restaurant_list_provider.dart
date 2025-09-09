@@ -5,7 +5,9 @@ import 'package:restaurant_app_final/static/restaurant_list_result_state.dart';
 class RestaurantListProvider extends ChangeNotifier {
   final ApiService _apiService;
 
-  RestaurantListProvider(this._apiService);
+  RestaurantListProvider(this._apiService) {
+    fetchRestaurantList();
+  }
 
   RestaurantListResultState _resultState = RestaurantListNoneState();
 

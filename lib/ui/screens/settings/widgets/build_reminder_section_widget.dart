@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:restaurant_app_final/provider/scheduling/restaurant_notfication_provider.dart';
 import 'package:restaurant_app_final/provider/scheduling/scheduling_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class BuildDailyReminderSectionWidget extends StatelessWidget {
   const BuildDailyReminderSectionWidget({super.key});
@@ -15,29 +14,47 @@ class BuildDailyReminderSectionWidget extends StatelessWidget {
     final notificationProvider = context.read<RestaurantNotificationProvider>();
 
     if (newValue) {
-      final prefs = await SharedPreferences.getInstance();
-      bool hasRequestedPermission =
-          prefs.getBool('hasRequestedPermission') ?? false;
-
-      if (!hasRequestedPermission) {
-        await notificationProvider.requestPermission();
-        await prefs.setBool('hasRequestedPermission', true);
+      final permissionGranted = await notificationProvider.requestPermission();
+      if (permissionGranted == true) {
+        await schedulingProvider.enableDailyRestaurants(true);
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Izin notifikasi ditolak. Pengingat tidak dapat diaktifkan.',
+              ),
+            ),
+          );
+        }
       }
+    } else {
+      await schedulingProvider.enableDailyRestaurants(false);
     }
-
-    schedulingProvider.enableDailyRestaurants(newValue);
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SchedulingProvider>(
       builder: (context, provider, _) {
-        return ListTile(
-          title: const Text('Restaurant Reminder'),
-          trailing: Switch.adaptive(
-            value: provider.isDailyRestaurantActive,
-            onChanged: (value) => _handleReminderToggle(context, value),
-          ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ListTile(
+              title: const Text('Restaurant Reminder'),
+              trailing: Switch.adaptive(
+                value: provider.isDailyRestaurantActive,
+                onChanged: (value) => _handleReminderToggle(context, value),
+              ),
+            ),
+            if (provider.isDailyRestaurantActive)
+              ListTile(
+                title: const Text('Waktu Pengingat'),
+                subtitle: Text(provider.selectedTime.format(context)),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => provider.selectTime(context),
+              ),
+          ],
         );
       },
     );

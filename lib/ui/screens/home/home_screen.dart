@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:restaurant_app_final/data/model/restaurant.dart';
 import 'package:restaurant_app_final/provider/home/restaurant_list_provider.dart';
 import 'package:restaurant_app_final/static/navigation_route.dart';
 import 'package:restaurant_app_final/static/restaurant_list_result_state.dart';
@@ -15,73 +16,80 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-
-    Future.microtask(() {
-      if (mounted) {
-        context.read<RestaurantListProvider>().fetchRestaurantList();
-      }
-    });
+  Future<void> _onRefresh() async {
+    await context.read<RestaurantListProvider>().fetchRestaurantList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 70,
-        centerTitle: false,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Restaurant',
-              style: AppTextStyles.textThemeCustom.headlineMedium,
+      body: RefreshIndicator(
+        onRefresh: _onRefresh,
+        child: CustomScrollView(
+          slivers: [
+            SliverToBoxAdapter(
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 32, 16, 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Restaurant',
+                        style: AppTextStyles.textThemeCustom.headlineMedium,
+                      ),
+                      Text(
+                        'Recommendation restaurant for you!',
+                        style: AppTextStyles.textThemeCustom.bodyLarge,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
-            Text(
-              'Recommendation restaurant for you!',
-              style: AppTextStyles.textThemeCustom.bodyLarge,
+            Consumer<RestaurantListProvider>(
+              builder: (context, value, child) {
+                return switch (value.resultState) {
+                  RestaurantListLoadingState() => const SliverFillRemaining(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                  RestaurantListLoadedState(data: var restaurantList) =>
+                    _buildRestaurantList(restaurantList),
+                  RestaurantListErrorState(message: var message) =>
+                    SliverFillRemaining(
+                      hasScrollBody: false,
+                      child: Center(
+                        child: ErrorCardWidget(
+                          message: message,
+                          onTap: _onRefresh,
+                        ),
+                      ),
+                    ),
+                  _ => const SliverToBoxAdapter(child: SizedBox.shrink()),
+                };
+              },
             ),
-            SizedBox(height: 16),
           ],
         ),
       ),
-      body: Consumer<RestaurantListProvider>(
-        builder: (context, value, child) {
-          return switch (value.resultState) {
-            RestaurantListLoadingState() => const Center(
-              child: CircularProgressIndicator(),
-            ),
-            RestaurantListLoadedState(data: var restaurantList) =>
-              ListView.builder(
-                itemCount: restaurantList.length,
-                itemBuilder: (context, index) {
-                  final restaurant = restaurantList[index];
-                  return RestaurantCardWidget(
-                    onTap: () {
-                      Navigator.pushNamed(
-                        context,
-                        NavigationRoute.detailRoute.name,
-                        arguments: restaurant.id,
-                      );
-                    },
-                    restaurant: restaurant,
-                  );
-                },
-              ),
-            RestaurantListErrorState(message: var message) => Center(
-              child: ErrorCardWidget(
-                message: message,
-                onTap: () {
-                  context.read<RestaurantListProvider>().fetchRestaurantList();
-                },
-              ),
-            ),
-            _ => const SizedBox(),
-          };
-        },
-      ),
+    );
+  }
+
+  Widget _buildRestaurantList(List<Restaurant> restaurantList) {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final restaurant = restaurantList[index];
+        return RestaurantCardWidget(
+          onTap: () {
+            Navigator.pushNamed(
+              context,
+              NavigationRoute.detailRoute.name,
+              arguments: restaurant.id,
+            );
+          },
+          restaurant: restaurant,
+        );
+      }, childCount: restaurantList.length),
     );
   }
 }
