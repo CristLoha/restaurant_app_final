@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:workmanager/workmanager.dart';
 import 'data/api/api_service.dart';
 import 'data/local/local_database_service.dart';
 import 'provider/detail/restaurant_detail_provider.dart';
@@ -17,6 +18,36 @@ import 'ui/screens/detail/detail_screen.dart';
 import 'ui/screens/navigation/navigation_screen.dart';
 import 'utils/theme.dart';
 
+const dailyTask = "daily-task";
+
+void callbackDispatcher() {
+  Workmanager().executeTask((task, inputData) async {
+    switch (task) {
+      case dailyTask:
+        final notificationService = RestaurantNotificationService();
+        await notificationService.init();
+        await notificationService.configureLocalTimeZone();
+
+        final apiService = ApiService();
+        final randomRestaurant = await apiService.getRandomRestaurant();
+        if (randomRestaurant != null) {
+          await notificationService.showInstantNotification(
+            randomRestaurant.id.hashCode,
+            "Rekomendasi Harian",
+            "Jangan lewatkan ${randomRestaurant.name} hari ini",
+            randomRestaurant.id,
+          );
+        }
+
+        break;
+      default:
+    }
+
+    return Future.value(true);
+  });
+}
+
+@pragma('vm:entry-point')
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -30,6 +61,8 @@ void main() async {
         notificationAppLaunchDetails!.notificationResponse;
     route = NavigationRoute.detailRoute.name;
     payload = notificationResponse?.payload;
+
+    await Workmanager().initialize(callbackDispatcher, isInDebugMode: false);
   }
 
   runApp(AppEntry(initialRoute: route, payload: payload));

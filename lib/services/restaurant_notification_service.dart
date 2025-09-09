@@ -233,4 +233,36 @@ class RestaurantNotificationService {
   Future<void> cancelAllNotifications() async {
     await flutterLocalNotificationsPlugin.cancelAll();
   }
+
+  Future<void> showInstantNotification(
+    int id,
+    String title,
+    String body,
+    String payload,
+  ) async {
+    try {
+      const androidPlatformChannelSpecifics = AndroidNotificationDetails(
+        "restaurant_reminder",
+        "Restaurant Reminder",
+        importance: Importance.max,
+        priority: Priority.high,
+        ticker: 'ticker',
+      );
+
+      const DarwinNotificationDetails iOSPlatformChannelSpecifics =
+          DarwinNotificationDetails(
+        presentAlert: true,
+        presentSound: true,
+        presentBadge: true,
+      );
+
+      final notificationDetails = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iOSPlatformChannelSpecifics,
+      );
+      await flutterLocalNotificationsPlugin.show(id, title, body, notificationDetails, payload: payload);
+    } catch (e) {
+      log("Gagal menampilkan notifikasi instan: $e");
+    }
+  }
 }

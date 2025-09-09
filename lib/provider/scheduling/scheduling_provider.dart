@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:workmanager/workmanager.dart';
+import '../../main.dart';
 import '../../services/restaurant_notification_service.dart';
 
 class SchedulingProvider extends ChangeNotifier {
@@ -35,9 +37,13 @@ class SchedulingProvider extends ChangeNotifier {
     notifyListeners();
 
     if (value) {
-      await _notificationService.scheduleDailyNotification(11, 0);
+      await Workmanager().registerPeriodicTask(
+        "1",
+        dailyTask,
+        frequency: const Duration(hours: 24),
+      );
     } else {
-      await _notificationService.cancelAllNotifications();
+      await Workmanager().cancelByUniqueName("1");
     }
 
     await _checkPendingNotifications();
