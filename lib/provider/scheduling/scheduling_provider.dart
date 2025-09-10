@@ -53,6 +53,23 @@ class SchedulingProvider extends ChangeNotifier {
     await prefs.setString(_timeKey, timeString);
   }
 
+  Future<bool> scheduledRestaurants(bool value) async {
+    if (value) {
+      final permissionGranted = await _notificationService.requestPermissions();
+      if (permissionGranted == true) {
+        await enableDailyRestaurants(true);
+        return true;
+      } else {
+        // Izin ditolak atau terjadi error
+        return false;
+      }
+    } else {
+      // Menonaktifkan selalu dianggap berhasil
+      await enableDailyRestaurants(false);
+      return true;
+    }
+  }
+
   Future<void> enableDailyRestaurants(bool value) async {
     _isDailyRestaurantActive = value;
     final prefs = await SharedPreferences.getInstance();

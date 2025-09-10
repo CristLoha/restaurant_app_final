@@ -34,13 +34,15 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
               itemCount: favoriteList.length,
               itemBuilder: (context, index) {
                 final restaurant = favoriteList[index];
+                final heroTag = 'favorite_${restaurant.id}';
                 return RestaurantCardWidget(
                   restaurant: restaurant,
+                  heroTag: heroTag,
                   onTap: () {
                     Navigator.pushNamed(
                       context,
-                      NavigationRoute.detailRoute.name,
-                      arguments: restaurant.id,
+                      NavigationRoute.detailRoute,
+                      arguments: {'id': restaurant.id, 'heroTag': heroTag},
                     );
                   },
                 );

@@ -1,7 +1,6 @@
-enum NavigationRoute {
-  mainRoute("/main"),
-  detailRoute("/detail");
+class NavigationRoute {
+  static const mainRoute = "/main";
+  static const detailRoute = "/detail";
 
-  const NavigationRoute(this.name);
-  final String name;
+  NavigationRoute._();
 }

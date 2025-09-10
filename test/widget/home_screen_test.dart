@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -22,7 +22,6 @@ class TestImageHttpOverrides extends HttpOverrides {
 
 void main() {
   late MockApiService mockApiService;
-  late RestaurantListProvider provider;
 
   setUpAll(() {
     HttpOverrides.global = TestImageHttpOverrides();
@@ -30,12 +29,11 @@ void main() {
 
   setUp(() {
     mockApiService = MockApiService();
-    provider = RestaurantListProvider(mockApiService);
   });
 
   Widget createTestableWidget(Widget child) {
-    return ChangeNotifierProvider<RestaurantListProvider>.value(
-      value: provider,
+    return ChangeNotifierProvider<RestaurantListProvider>(
+      create: (_) => RestaurantListProvider(mockApiService),
       child: MaterialApp(home: child),
     );
   }
@@ -45,22 +43,15 @@ void main() {
     testWidgets(
       'Seharusnya menampilkan loading indicator saat pertama kali dibuka',
       (tester) async {
-        debugPrint('Mock API: Memulai permintaan data');
         when(() => mockApiService.getRestaurantList()).thenAnswer((_) async {
-          await Future.delayed(const Duration(seconds: 1));
-          return RestaurantListResponse(
-            error: false,
-            message: 'Success',
-            restaurants: [],
-            count: 0,
-          );
+          // Buat Future yang tidak akan selesai agar loading tetap terlihat
+          return Completer<RestaurantListResponse>().future;
         });
 
         await tester.pumpWidget(createTestableWidget(const HomeScreen()));
-        await tester.pump();
+        await tester.pump(Duration.zero); // Trigger state change to loading
 
         expect(find.byType(CircularProgressIndicator), findsOneWidget);
-        await tester.pumpAndSettle();
       },
     );
 
@@ -89,10 +80,12 @@ void main() {
         });
 
         await tester.pumpWidget(createTestableWidget(const HomeScreen()));
-        await tester.pump();
-        await tester.pump(const Duration(seconds: 1));
+        // pumpAndSettle can time out due to complex animations (RefreshIndicator, Hero).
+        // We pump manually to step through the states.
+        await tester.pump(); // Triggers loading state.
+        await tester
+            .pump(); // Triggers loaded state after the future completes.
 
-        debugPrint('Memeriksa apakah daftar restoran muncul di UI...');
         expect(find.text('Melting Pot'), findsOneWidget);
         expect(find.text('Medan'), findsOneWidget);
         expect(find.byType(CircularProgressIndicator), findsNothing);
@@ -108,8 +101,9 @@ void main() {
         ).thenThrow(Exception('Terjadi kesalahan.'));
 
         await tester.pumpWidget(createTestableWidget(const HomeScreen()));
-        await tester.pump();
-        await tester.pumpAndSettle();
+        // pumpAndSettle can time out. Pumping manually is more reliable.
+        await tester.pump(); // Triggers loading state.
+        await tester.pump(); // Triggers error state after the future completes.
 
         expect(
           find.text('Terjadi kesalahan. Coba lagi nanti.'),

@@ -9,7 +9,12 @@ import 'menu_card_widget.dart';
 
 class ContentDetailWidget extends StatefulWidget {
   final Restaurant restaurantDetail;
-  const ContentDetailWidget({super.key, required this.restaurantDetail});
+  final String heroTag;
+  const ContentDetailWidget({
+    super.key,
+    required this.restaurantDetail,
+    required this.heroTag,
+  });
 
   @override
   State<ContentDetailWidget> createState() => _ContentDetailWidgetState();
@@ -69,7 +74,7 @@ class _ContentDetailWidgetState extends State<ContentDetailWidget> {
             bottomRight: Radius.circular(16),
           ),
           child: Hero(
-            tag: widget.restaurantDetail.id,
+            tag: widget.heroTag,
             child: Image.network(
               getRestaurantImageUrl(widget.restaurantDetail.pictureId),
               width: double.infinity,

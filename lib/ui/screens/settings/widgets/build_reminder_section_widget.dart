@@ -1,35 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:restaurant_app_final/provider/scheduling/restaurant_notfication_provider.dart';
 import 'package:restaurant_app_final/provider/scheduling/scheduling_provider.dart';
 
-class BuildDailyReminderSectionWidget extends StatelessWidget {
+class BuildDailyReminderSectionWidget extends StatefulWidget {
   const BuildDailyReminderSectionWidget({super.key});
 
-  Future<void> _handleReminderToggle(
-    BuildContext context,
-    bool newValue,
-  ) async {
-    final schedulingProvider = context.read<SchedulingProvider>();
-    final notificationProvider = context.read<RestaurantNotificationProvider>();
+  @override
+  State<BuildDailyReminderSectionWidget> createState() =>
+      _BuildDailyReminderSectionWidgetState();
+}
 
-    if (newValue) {
-      final permissionGranted = await notificationProvider.requestPermission();
-      if (permissionGranted == true) {
-        await schedulingProvider.enableDailyRestaurants(true);
-      } else {
-        if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                'Izin notifikasi ditolak. Pengingat tidak dapat diaktifkan.',
-              ),
-            ),
-          );
-        }
-      }
-    } else {
-      await schedulingProvider.enableDailyRestaurants(false);
+class _BuildDailyReminderSectionWidgetState
+    extends State<BuildDailyReminderSectionWidget> {
+  bool _isHandlingToggle = false;
+
+  Future<void> _handleReminderToggle(BuildContext context, bool value) async {
+    // Mencegah panggilan ganda jika toggle sedang diproses
+    if (_isHandlingToggle) return;
+
+    setState(() {
+      _isHandlingToggle = true;
+    });
+
+    final schedulingProvider = context.read<SchedulingProvider>();
+    await schedulingProvider.scheduledRestaurants(value);
+
+    // Pastikan widget masih ada di tree sebelum melanjutkan
+    if (mounted) {
+      // Selesaikan proses loading
+      setState(() {
+        _isHandlingToggle = false;
+      });
     }
   }
 
@@ -42,10 +43,18 @@ class BuildDailyReminderSectionWidget extends StatelessWidget {
           children: [
             ListTile(
               title: const Text('Restaurant Reminder'),
-              trailing: Switch.adaptive(
-                value: provider.isDailyRestaurantActive,
-                onChanged: (value) => _handleReminderToggle(context, value),
-              ),
+              trailing:
+                  _isHandlingToggle
+                      ? const SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(strokeWidth: 3),
+                      )
+                      : Switch.adaptive(
+                        value: provider.isDailyRestaurantActive,
+                        onChanged:
+                            (value) => _handleReminderToggle(context, value),
+                      ),
             ),
             if (provider.isDailyRestaurantActive)
               ListTile(

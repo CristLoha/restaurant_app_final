@@ -1,5 +1,6 @@
 import 'category.dart';
 import 'customer_review.dart';
+import 'menus.dart';
 
 class Restaurant {
   final String id;
@@ -50,7 +51,7 @@ class Restaurant {
               : null,
     );
   }
-  factory Restaurant.fromSearchJson(Map<String, dynamic> json) {
+  factory Restaurant.fromListJson(Map<String, dynamic> json) {
     return Restaurant(
       id: json['id'],
       name: json['name'],

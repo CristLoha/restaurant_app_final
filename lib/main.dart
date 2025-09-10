@@ -7,7 +7,6 @@ import 'provider/favorite/local_database_provider.dart';
 import 'provider/home/restaurant_list_provider.dart';
 import 'provider/navigation/navigation_provider.dart';
 import 'provider/scheduling/payload_provider.dart';
-import 'provider/scheduling/restaurant_notfication_provider.dart';
 import 'provider/scheduling/scheduling_provider.dart';
 import 'provider/search/restaurant_search_provider.dart';
 import 'provider/theme/theme_provider.dart';
@@ -23,13 +22,13 @@ void main() async {
 
   final notificationAppLaunchDetails =
       await flutterLocalNotificationsPlugin.getNotificationAppLaunchDetails();
-  String route = NavigationRoute.mainRoute.name;
+  String route = NavigationRoute.mainRoute; // Sekarang ini adalah String
   String? payload;
 
   if (notificationAppLaunchDetails?.didNotificationLaunchApp ?? false) {
     final notificationResponse =
         notificationAppLaunchDetails!.notificationResponse;
-    route = NavigationRoute.detailRoute.name;
+    route = NavigationRoute.detailRoute; // Sekarang ini adalah String
     payload = notificationResponse?.payload;
   }
 
@@ -76,12 +75,12 @@ class AppEntry extends StatelessWidget {
         ChangeNotifierProvider(
           create: (context) => ThemeProvider()..loadTheme(),
         ),
-        ChangeNotifierProvider(
-          create:
-              (context) => RestaurantNotificationProvider(
-                context.read<RestaurantNotificationService>(),
-              ),
-        ),
+        // ChangeNotifierProvider(
+        //   create:
+        //       (context) => RestaurantNotificationProvider(
+        //         context.read<RestaurantNotificationService>(),
+        //       ),
+        // ),
         ChangeNotifierProvider(
           create:
               (context) => SchedulingProvider(
@@ -114,13 +113,38 @@ class RestaurantApp extends StatelessWidget {
           darkTheme: AppTheme.darkTheme,
           themeMode: themeProvider.themeMode,
           initialRoute: initialRoute,
-          routes: {
-            NavigationRoute.mainRoute.name:
-                (context) => const NavigationScreen(),
-            NavigationRoute.detailRoute.name: (context) {
-              final args = ModalRoute.of(context)?.settings.arguments;
-              return DetailScreen(tourismId: args is String ? args : '');
-            },
+          onGenerateRoute: (settings) {
+            switch (settings.name) {
+              case NavigationRoute
+                  .mainRoute: // Sekarang ini adalah const String
+                return MaterialPageRoute(
+                  builder: (_) => const NavigationScreen(),
+                );
+              case NavigationRoute
+                  .detailRoute: // Sekarang ini adalah const String
+                final args = settings.arguments;
+                if (args is Map<String, String>) {
+                  // Navigasi dari Home, Search, atau Favorite
+                  return MaterialPageRoute(
+                    builder:
+                        (_) => DetailScreen(
+                          restaurantId: args['id']!,
+                          heroTag: args['heroTag']!,
+                        ),
+                  );
+                } else if (args is String) {
+                  // Navigasi dari Notifikasi
+                  return MaterialPageRoute(
+                    builder:
+                        (_) => DetailScreen(
+                          restaurantId: args,
+                          heroTag: 'notification_$args',
+                        ),
+                  );
+                }
+            }
+            // Jika route tidak ditemukan atau argumen tidak valid
+            return null;
           },
         );
       },

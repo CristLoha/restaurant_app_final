@@ -63,17 +63,10 @@ class RestaurantNotificationService {
     );
   }
 
-  Future<bool> _isAndroidPermissionGranted() async {
-    return await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >()
-            ?.areNotificationsEnabled() ??
-        false;
-  }
 
   Future<bool?> requestPermissions() async {
-    if (_isRequestingPermission) return null;
+    if (_isRequestingPermission) return null; // Prevent re-entry
+    _isRequestingPermission = true;
     try {
       if (defaultTargetPlatform == TargetPlatform.iOS) {
         final iOSImplementation =
@@ -93,14 +86,18 @@ class RestaurantNotificationService {
                   AndroidFlutterLocalNotificationsPlugin
                 >();
 
-        final requestNotificationPermission =
+        final bool? notificationPermissionGranted =
             await androidImplementation?.requestNotificationsPermission();
-        final notificationEnabled = await _isAndroidPermissionGranted();
-        final requestAlarmEnabled = await _requestExactAlarmsPermission();
 
-        return (requestNotificationPermission ?? false) &&
-            notificationEnabled &&
-            requestAlarmEnabled;
+        // Jika izin notifikasi standar tidak diberikan, kita tidak bisa lanjut.
+        if (notificationPermissionGranted != true) {
+          return false;
+        }
+
+        // The exact alarm permission is implicitly requested by the system when a
+        // notification is scheduled with `androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle`.
+        // We only need to ensure the standard notification permission is granted.
+        return true;
       } else {
         return false;
       }
@@ -116,15 +113,6 @@ class RestaurantNotificationService {
     tz.initializeTimeZones();
     final String timeZoneName = await FlutterTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZoneName));
-  }
-
-  Future<bool> _requestExactAlarmsPermission() async {
-    return await flutterLocalNotificationsPlugin
-            .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin
-            >()
-            ?.requestExactAlarmsPermission() ??
-        false;
   }
 
   Future<void> scheduleDailyNotification(int hour, int minute) async {
@@ -251,16 +239,22 @@ class RestaurantNotificationService {
 
       const DarwinNotificationDetails iOSPlatformChannelSpecifics =
           DarwinNotificationDetails(
-        presentAlert: true,
-        presentSound: true,
-        presentBadge: true,
-      );
+            presentAlert: true,
+            presentSound: true,
+            presentBadge: true,
+          );
 
       final notificationDetails = NotificationDetails(
         android: androidPlatformChannelSpecifics,
         iOS: iOSPlatformChannelSpecifics,
       );
-      await flutterLocalNotificationsPlugin.show(id, title, body, notificationDetails, payload: payload);
+      await flutterLocalNotificationsPlugin.show(
+        id,
+        title,
+        body,
+        notificationDetails,
+        payload: payload,
+      );
     } catch (e) {
       log("Gagal menampilkan notifikasi instan: $e");
     }

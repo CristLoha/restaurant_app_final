@@ -21,7 +21,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           context.read<PayloadProvider>().payload = payload;
           Navigator.pushNamed(
             context,
-            NavigationRoute.detailRoute.name,
+            NavigationRoute.detailRoute,
             arguments: payload,
           );
         }
@@ -39,7 +39,7 @@ class _NavigationScreenState extends State<NavigationScreen> {
           context.read<PayloadProvider>().payload = payload;
           Navigator.pushNamed(
             context,
-            NavigationRoute.detailRoute.name,
+            NavigationRoute.detailRoute,
             arguments: payload,
           );
         }
@@ -68,7 +68,10 @@ class _NavigationScreenState extends State<NavigationScreen> {
     final navigationProvider = Provider.of<NavigationProvider>(context);
 
     return Scaffold(
-      body: navigationProvider.currentPage,
+      body: IndexedStack(
+        index: navigationProvider.currentIndex,
+        children: navigationProvider.pages,
+      ),
       bottomNavigationBar: SizedBox(
         height: 100,
         child: BottomNavigationBar(

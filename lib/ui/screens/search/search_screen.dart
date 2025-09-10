@@ -60,13 +60,18 @@ class _SearchScreenState extends State<SearchScreen> {
                       itemCount: restaurants.length,
                       itemBuilder: (context, index) {
                         final restaurant = restaurants[index];
+                        final heroTag = 'search_${restaurant.id}';
                         return RestaurantCardWidget(
                           restaurant: restaurant,
+                          heroTag: heroTag,
                           onTap: () {
                             Navigator.pushNamed(
                               context,
-                              NavigationRoute.detailRoute.name,
-                              arguments: restaurant.id,
+                              NavigationRoute.detailRoute,
+                              arguments: {
+                                'id': restaurant.id,
+                                'heroTag': heroTag,
+                              },
                             );
                           },
                         );

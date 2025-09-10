@@ -8,11 +8,13 @@ import 'package:shimmer/shimmer.dart';
 class RestaurantCardWidget extends StatelessWidget {
   final Restaurant restaurant;
   final Function() onTap;
+  final String heroTag;
 
   const RestaurantCardWidget({
     super.key,
     required this.restaurant,
     required this.onTap,
+    required this.heroTag,
   });
 
   @override
@@ -27,34 +29,24 @@ class RestaurantCardWidget extends StatelessWidget {
               constraints: const BoxConstraints(maxWidth: 100, maxHeight: 100),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Stack(
-                  children: [
-                    Shimmer.fromColors(
-                      baseColor: Colors.grey[300]!,
-                      highlightColor: Colors.grey[100]!,
-                      child: Container(
-                        width: 100,
-                        height: 80,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Hero(
-                      tag: restaurant.id,
-                      child: CachedNetworkImage(
-                        imageUrl: getRestaurantImageUrl(restaurant.pictureId),
-                        fit: BoxFit.cover,
-                        width: 100,
-                        height: 80,
-                        errorWidget:
-                            (context, url, error) => const Center(
-                              child: Icon(
-                                Icons.broken_image,
-                                color: Colors.grey,
-                              ),
-                            ),
-                      ),
-                    ),
-                  ],
+                child: Hero(
+                  tag: heroTag,
+                  child: CachedNetworkImage(
+                    imageUrl: getRestaurantImageUrl(restaurant.pictureId),
+                    fit: BoxFit.cover,
+                    width: 100,
+                    height: 80,
+                    placeholder:
+                        (context, url) => Shimmer.fromColors(
+                          baseColor: Colors.grey[300]!,
+                          highlightColor: Colors.grey[100]!,
+                          child: Container(color: Colors.white),
+                        ),
+                    errorWidget:
+                        (context, url, error) => const Center(
+                          child: Icon(Icons.broken_image, color: Colors.grey),
+                        ),
+                  ),
                 ),
               ),
             ),

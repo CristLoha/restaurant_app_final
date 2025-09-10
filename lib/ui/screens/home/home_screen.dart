@@ -7,6 +7,7 @@ import 'package:restaurant_app_final/static/restaurant_list_result_state.dart';
 import 'package:restaurant_app_final/ui/widgets/error_card_widget.dart';
 import 'package:restaurant_app_final/utils/theme.dart';
 import 'widget/restaurant_card_widget.dart';
+import 'widget/restaurant_card_shimmer_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +17,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(
+      () => context.read<RestaurantListProvider>().fetchRestaurantList(),
+    );
+  }
+
   Future<void> _onRefresh() async {
     await context.read<RestaurantListProvider>().fetchRestaurantList();
   }
@@ -50,9 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
             Consumer<RestaurantListProvider>(
               builder: (context, value, child) {
                 return switch (value.resultState) {
-                  RestaurantListLoadingState() => const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
+                  RestaurantListLoadingState() => _buildShimmerList(),
                   RestaurantListLoadedState(data: var restaurantList) =>
                     _buildRestaurantList(restaurantList),
                   RestaurantListErrorState(message: var message) =>
@@ -79,17 +86,28 @@ class _HomeScreenState extends State<HomeScreen> {
     return SliverList(
       delegate: SliverChildBuilderDelegate((context, index) {
         final restaurant = restaurantList[index];
+        final heroTag = 'home_${restaurant.id}';
         return RestaurantCardWidget(
           onTap: () {
             Navigator.pushNamed(
               context,
-              NavigationRoute.detailRoute.name,
-              arguments: restaurant.id,
+              NavigationRoute.detailRoute,
+              arguments: {'id': restaurant.id, 'heroTag': heroTag},
             );
           },
           restaurant: restaurant,
+          heroTag: heroTag,
         );
       }, childCount: restaurantList.length),
+    );
+  }
+
+  Widget _buildShimmerList() {
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) => const RestaurantCardShimmerWidget(),
+        childCount: 5,
+      ),
     );
   }
 }

@@ -23,18 +23,21 @@ class BuildThemeSectionWidget extends StatelessWidget {
               ),
             ),
             RadioListTile(
+              key: const Key('light_theme_radio'),
               value: ThemeMode.light,
               groupValue: themeProvider.themeMode,
               onChanged: (value) => themeProvider.setTheme(value!),
               title: Text('Light Mode'),
             ),
             RadioListTile(
+              key: const Key('dark_theme_radio'),
               value: ThemeMode.dark,
               groupValue: themeProvider.themeMode,
               onChanged: (value) => themeProvider.setTheme(value!),
               title: Text('Dark Mode'),
             ),
             RadioListTile(
+              key: const Key('system_theme_radio'),
               value: ThemeMode.system,
               groupValue: themeProvider.themeMode,
               onChanged: (value) => themeProvider.setTheme(value!),

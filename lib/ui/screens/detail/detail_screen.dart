@@ -8,8 +8,13 @@ import 'widgets/content_detail_widget.dart';
 import 'widgets/favorite_icon_widget.dart';
 
 class DetailScreen extends StatefulWidget {
-  final String tourismId;
-  const DetailScreen({super.key, required this.tourismId});
+  final String restaurantId;
+  final String heroTag;
+  const DetailScreen({
+    super.key,
+    required this.restaurantId,
+    required this.heroTag,
+  });
 
   @override
   State<DetailScreen> createState() => _DetailScreenState();
@@ -22,7 +27,7 @@ class _DetailScreenState extends State<DetailScreen> {
     Future.microtask(() {
       if (mounted) {
         context.read<RestaurantDetailProvider>().fetchRestaurantDetail(
-          widget.tourismId,
+          widget.restaurantId,
         );
       }
     });
@@ -55,14 +60,17 @@ class _DetailScreenState extends State<DetailScreen> {
               child: CircularProgressIndicator(),
             ),
             RestaurantDetailLoadedState(data: var restaurant) =>
-              ContentDetailWidget(restaurantDetail: restaurant),
+              ContentDetailWidget(
+                restaurantDetail: restaurant,
+                heroTag: widget.heroTag,
+              ),
             RestaurantDetailErrorState(message: var message) => Center(
               child: ErrorCardWidget(
                 message: message,
                 onTap: () {
                   context
                       .read<RestaurantDetailProvider>()
-                      .fetchRestaurantDetail(widget.tourismId);
+                      .fetchRestaurantDetail(widget.restaurantId);
                 },
               ),
             ),
